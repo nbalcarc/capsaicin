@@ -15,6 +15,3 @@ class Genome:
     file_path: str
 
 
-
-
-
