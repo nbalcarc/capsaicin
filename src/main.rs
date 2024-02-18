@@ -1,5 +1,3 @@
-use levenshtein;
-
 use std::{fs, collections::HashSet};
 
 
@@ -48,7 +46,8 @@ fn kmers_from_filestring<'a>(contents: &'a str) -> Vec<&'a str> {
 
 fn test_kmers() {
     //let file_loc = "/run/media/terrior/BeutelratteDrive/Genomes/isolated/droseraCapensis.fna";
-    let file_loc = "/run/media/terrior/BeutelratteDrive/Genomes/isolated/sepiaLycidas.fna";
+    //let file_loc = "/run/media/terrior/BeutelratteDrive/Genomes/isolated/sepiaLycidas.fna";
+    let file_loc = "input_files/sepiaLycidas.fna";
     let contents = fs::read_to_string(file_loc).expect("welp");
     let kmers = kmers_from_filestring(&contents);
     let hashed: HashSet<&str> = HashSet::from_iter(kmers.into_iter());
