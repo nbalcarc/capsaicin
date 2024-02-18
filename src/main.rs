@@ -1,4 +1,5 @@
 use std::{fs::{self, File}, collections::HashSet, io::Write};
+use rayon::prelude::*;
 
 
 fn kmers_from_filestring<'a>(contents: &'a str) -> Vec<&'a str> {
@@ -47,10 +48,10 @@ fn kmers_from_filestring<'a>(contents: &'a str) -> Vec<&'a str> {
 fn test_kmers() {
     //let file_loc = "/run/media/terrior/BeutelratteDrive/Genomes/isolated/droseraCapensis.fna";
     //let file_loc = "/run/media/terrior/BeutelratteDrive/Genomes/isolated/sepiaLycidas.fna";
-    let file_loc = "input_files/sepiaLycidas.fna";
+    //let file_loc = "input_files/sepiaLycidas.fna";
     let all_files = [
         //"ariolimaxColumbianus.fna",
-        //"droseraCapensis.fna",
+        "droseraCapensis.fna",
         //"physcomitriumPatens.fna",
         //"sepiaLycidas.fna",
         //"bidensHawaiiensis.fna",
@@ -70,8 +71,10 @@ fn test_kmers() {
     ];
     //let file_header = "input_files/";
     let file_header = "/run/media/terrior/BeutelratteDrive/Genomes/isolated/";
-    fs::create_dir("output_files"); //create output directory
-    for file_path in all_files {
+    let _ = fs::create_dir("output_files"); //create output directory
+
+    all_files.par_iter().for_each(|file_path| {
+        println!("starting {}", file_path);
         let contents = fs::read_to_string(String::from(file_header) + file_path).expect("welp").to_ascii_uppercase();
         let kmers = kmers_from_filestring(&contents);
         let hashed: HashSet<&str> = HashSet::from_iter(kmers.into_iter());
@@ -81,7 +84,19 @@ fn test_kmers() {
             file.write_all(hash.as_bytes()).expect("SSSSSSSSSSSS");
             file.write_all(b"\n").expect("NOTHING");
         }
-    }
+        println!("finished {}", file_path);
+    });
+    //for file_path in all_files {
+    //    let contents = fs::read_to_string(String::from(file_header) + file_path).expect("welp").to_ascii_uppercase();
+    //    let kmers = kmers_from_filestring(&contents);
+    //    let hashed: HashSet<&str> = HashSet::from_iter(kmers.into_iter());
+
+    //    let mut file = File::create(String::from("output_files/") + file_path).expect("SOMETHING WENT WRONG AAAAAA");
+    //    for hash in hashed {
+    //        file.write_all(hash.as_bytes()).expect("SSSSSSSSSSSS");
+    //        file.write_all(b"\n").expect("NOTHING");
+    //    }
+    //}
 
     //let preprocessed = kmers_preprocess(&contents);
     //let kmers = kmers_from_filestring_append(&preprocessed);
