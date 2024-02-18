@@ -1,4 +1,4 @@
-use std::{fs, collections::HashSet};
+use std::{fs::{self, File}, collections::HashSet, io::Write};
 
 
 fn kmers_from_filestring<'a>(contents: &'a str) -> Vec<&'a str> {
@@ -48,15 +48,46 @@ fn test_kmers() {
     //let file_loc = "/run/media/terrior/BeutelratteDrive/Genomes/isolated/droseraCapensis.fna";
     //let file_loc = "/run/media/terrior/BeutelratteDrive/Genomes/isolated/sepiaLycidas.fna";
     let file_loc = "input_files/sepiaLycidas.fna";
-    let contents = fs::read_to_string(file_loc).expect("welp");
-    let kmers = kmers_from_filestring(&contents);
-    let hashed: HashSet<&str> = HashSet::from_iter(kmers.into_iter());
+    let all_files = [
+        //"ariolimaxColumbianus.fna",
+        //"droseraCapensis.fna",
+        //"physcomitriumPatens.fna",
+        //"sepiaLycidas.fna",
+        //"bidensHawaiiensis.fna",
+        //"eublepharisMacularius.fna",
+        //"porcellioScaber.fna",
+        //"sphagnumFallax.fna",
+        //"bombusTerrestris.fna",
+        //"hemileiaVastatrix.fna",
+        "psilocybeMexicana.fna",
+        //"takakiaLepidozioides.fna",
+        //"crassostreaVirginica.fna",
+        //"malasseziaRestricta.fna",
+        //"sarraceniaLeucophylla.fna",
+        //"cryptoproctaFerox.fna",
+        //"pardosaPseudoannulata.fna",
+        //"scomberScrombus.fna",
+    ];
+    //let file_header = "input_files/";
+    let file_header = "/run/media/terrior/BeutelratteDrive/Genomes/isolated/";
+    fs::create_dir("output_files"); //create output directory
+    for file_path in all_files {
+        let contents = fs::read_to_string(String::from(file_header) + file_path).expect("welp").to_ascii_uppercase();
+        let kmers = kmers_from_filestring(&contents);
+        let hashed: HashSet<&str> = HashSet::from_iter(kmers.into_iter());
+
+        let mut file = File::create(String::from("output_files/") + file_path).expect("SOMETHING WENT WRONG AAAAAA");
+        for hash in hashed {
+            file.write_all(hash.as_bytes()).expect("SSSSSSSSSSSS");
+            file.write_all(b"\n").expect("NOTHING");
+        }
+    }
 
     //let preprocessed = kmers_preprocess(&contents);
     //let kmers = kmers_from_filestring_append(&preprocessed);
     //let hashed: HashSet<&str> = HashSet::from_iter(kmers.into_iter());
 
-    println!("{}", hashed.len());
+    //println!("{}", hashed.len());
 }
 
 
